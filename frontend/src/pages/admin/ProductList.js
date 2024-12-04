@@ -15,7 +15,6 @@ import Checkbox from '@mui/material/Checkbox';
 const ProductList = () => {
     const [loading, setLoading] = useState(true);
     const [products, setProducts] = useState([]);
-    const [categories, setCategories] = useState([]);
     const [selectedProducts, setSelectedProducts] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
 
@@ -40,21 +39,7 @@ const ProductList = () => {
             }
         };
 
-        const fetchCategories = async () => {
-            setLoading(true);
-            try {
-                const { data } = await axios.get('http://localhost:4001/api/v1/admin/categories', config);
-                setCategories(data.category);
-            } catch (error) {
-                console.error('Error fetching categories:', error);
-                toast.error('Failed to fetch categories');
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchProducts();
-        fetchCategories();
     }, [config]);
 
     const handleDelete = async (id) => {
@@ -195,7 +180,7 @@ const ProductList = () => {
                             precision={0.5}
                         />
                     </p>
-                    <p><strong>Category:</strong> {categories.find(cat => cat._id === product.category)?.name || 'N/A'}</p>
+                    <p><strong>Category:</strong> {product.category.name || 'N/A'}</p>
                     <p className="product-price">
                         <strong>Created At:</strong> {new Date(product.createdAt).toLocaleString()}
                     </p>

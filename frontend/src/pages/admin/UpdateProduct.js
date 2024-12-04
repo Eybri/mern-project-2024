@@ -3,7 +3,6 @@ import MetaData from '../../components/Layout/Metadata';
 import Loader from '../../components/Layout/Loader';
 import Sidebar from './SideBar';
 import axios from 'axios';
-import '../../App.css';
 import { getToken } from '../../utils/helpers';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
@@ -18,7 +17,6 @@ const UpdateProduct = () => {
     const [category, setCategory] = useState('');
     const [categories, setCategories] = useState([]);
     const [images, setImages] = useState([]);
-    const [, setOldImages] = useState([]);
     const [imagesPreview, setImagesPreview] = useState([]);
     const [error, setError] = useState('');
     const [updateError, setUpdateError] = useState('');
@@ -54,9 +52,8 @@ const UpdateProduct = () => {
                 setDescription(description);
                 setPrice(price);
                 setStock(stock);
-                setCategory(category);
+                setCategory(category._id);
                 setColors(colors);
-                setOldImages(images);
                 setImagesPreview(images.map(img => img.url));
             } catch (error) {
                 setError(error.response?.data?.message || 'Error fetching product!');
@@ -78,10 +75,8 @@ const UpdateProduct = () => {
             const { data } = await axios.put(`http://localhost:4001/api/v1/admin/product/${id}`, productData, config);
             setIsUpdated(data.success);
         } catch (error) {
-            console.error(error.response?.data);
             const message = error.response?.data?.message || 'Error updating product!';
             setUpdateError(message);
-            console.error('Update Error:', message);
         }
     };
 
@@ -154,7 +149,7 @@ const UpdateProduct = () => {
                             <MetaData title="Update Product" />
                             <div className="container-fluid">
                                 <h1 id="products_heading">Update Product</h1>
-                                <div className="card shadow-lg mb-4" style={{ height: 'auto' }}>
+                                <div className="card shadow-lg mb-4">
                                     <div className="card-body">
                                         <form onSubmit={submitHandler} className="p-3 bg-white" encType="multipart/form-data">
                                             <div className="form-group">
@@ -221,7 +216,6 @@ const UpdateProduct = () => {
                                                     </div>
                                                 </div>
                                             </div>
-
                                             <div className="form-group">
                                                 <label>Available Colors</label>
                                                 <div className="color-picker-row">
@@ -244,28 +238,26 @@ const UpdateProduct = () => {
                                                     ))}
                                                 </div>
                                             </div>
-
-                                            <div className="custom-file">
+                                            <div className="form-group">
+                                                <label>Images</label>
                                                 <input
                                                     type="file"
-                                                    name="images"
-                                                    className="custom-file-input"
-                                                    id="customFiles"
-                                                    accept="image/*"
-                                                    onChange={onChange}
                                                     multiple
+                                                    className="form-control"
+                                                    onChange={onChange}
                                                 />
-                                                <label className="custom-file-label" htmlFor="customFiles">
-                                                    Choose Images
-                                                </label>
                                             </div>
-                                            <div className="image-preview">
-                                                {imagesPreview.map((img, index) => (
-                                                    <img src={img} alt={`Preview ${index}`} key={index} className="mt-3 mr-2" width="55" height="52" />
-                                                ))}
-                                            </div>
-
-                                            <button type="submit" className="btn btn-dark btn-block mt-3">Update Product</button>
+                                            {imagesPreview.length > 0 && (
+                                                <div className="form-group">
+                                                    <label>Image Preview</label>
+                                                    <div className="image-preview-container">
+                                                        {imagesPreview.map((src, index) => (
+                                                            <img key={index} src={src} alt={`preview-${index}`} className="preview-image" />
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+                                            <button type="submit" className="btn btn-primary">Update Product</button>
                                         </form>
                                     </div>
                                 </div>

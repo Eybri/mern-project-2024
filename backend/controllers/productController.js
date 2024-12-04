@@ -100,7 +100,7 @@ exports.getProducts = async (req, res, next) => {
 
 exports.getAdminProducts = async (req, res, next) => {
     try {
-        const products = await Product.find();
+        const products = await Product.find().populate('category', 'name'); // Populate category with its name
         res.status(200).json({
             success: true,
             products
@@ -112,7 +112,8 @@ exports.getAdminProducts = async (req, res, next) => {
             error: error.message
         });
     }
-}
+};
+
 
 exports.updateProduct = async (req, res, next) => {
     try {
@@ -217,6 +218,10 @@ exports.getProduct = async (req, res, next) => {
 };
 
 
+const Review = require('../models/reviewModel'); 
+
+const Order = require('../models/orderModel'); 
+
 exports.deleteProduct = async (req, res, next) => {
     try {
         const product = await Product.findByIdAndDelete(req.params.id);
@@ -224,7 +229,7 @@ exports.deleteProduct = async (req, res, next) => {
         if (!product) {
             return res.status(404).json({
                 success: false,
-                message: 'Product not found'
+                message: 'Product not found',
             });
         }
 
@@ -232,16 +237,20 @@ exports.deleteProduct = async (req, res, next) => {
             await cloudinary.v2.uploader.destroy(image.public_id);
         }
 
+        await Review.deleteMany({ _id: { $in: product.reviews } });
+
+        await Order.deleteMany({ "products.productId": req.params.id });
+
         res.status(200).json({
             success: true,
-            message: 'Product deleted'
+            message: 'Product, associated reviews, and orders deleted',
         });
     } catch (error) {
         console.error('Error deleting product:', error);
         res.status(500).json({
             success: false,
             message: 'Failed to delete product',
-            error: error.message
+            error: error.message,
         });
     }
-}
+};

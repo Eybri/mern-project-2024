@@ -2,14 +2,14 @@ import React, { Fragment, useState, useEffect, useRef } from 'react';
 import MetaData from '../../components/Layout/Metadata';
 import Loader from '../../components/Layout/Loader';
 import Sidebar from './SideBar';
-import { Pie, Line } from 'react-chartjs-2'; // Import Line chart now as well
+import { Pie, Line } from 'react-chartjs-2'; 
 import axios from 'axios';
 import '../../App.css';
 import { getToken } from '../../utils/helpers';
 
 import {
     Chart,
-    ArcElement, // Required for pie/doughnut charts
+    ArcElement, 
     LineElement,
     BarElement,
     PointElement,
@@ -20,7 +20,6 @@ import {
     Legend
 } from 'chart.js';
 
-// Register the required components
 Chart.register(
     ArcElement,
     LineElement,
@@ -80,13 +79,17 @@ const AdminDashboard = () => {
                         endDate: dateFilter.endDate
                     }
                 });
-
+    
                 setTotalSalesStats(data.salesData || []);
             } catch (error) {
                 console.error('Error fetching total sales stats:', error);
                 setError(error.message || 'Failed to fetch data');
             }
         };
+    
+        if (dateFilter.startDate && dateFilter.endDate) {
+            fetchTotalSalesStats();
+        }
 
         fetchCategoryStock();
         fetchTotalSalesStats();

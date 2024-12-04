@@ -229,31 +229,44 @@ exports.GetOrder = async (req, res, next) => {
 
 exports.getTotalSalesStats = async (req, res) => {
     try {
-        const totalSales = await Order.aggregate([
-            { 
-                $match: { 
-                    status: 'Delivered' 
-                }
+        const { startDate, endDate } = req.query;
+
+        // Convert startDate and endDate to Date objects if they exist
+        const matchStage = {
+            $match: {
+                status: 'Delivered',
             },
-            { 
+        };
+
+        if (startDate && endDate) {
+            matchStage.$match.createdAt = {
+                $gte: new Date(startDate),
+                $lte: new Date(endDate),
+            };
+        }
+
+        const totalSales = await Order.aggregate([
+            matchStage,
+            {
                 $group: {
-                    _id: { 
-                        $dateToString: { 
-                            format: "%Y-%m-%d", 
-                            date: "$createdAt" 
-                        } 
+                    _id: {
+                        $dateToString: {
+                            format: "%Y-%m",
+                            date: "$createdAt"
+                        }
                     },
-                    totalSales: { 
-                        $sum: "$totalPrice" 
+                    totalSales: {
+                        $sum: "$totalPrice"
                     }
                 }
             },
-            { 
-                $sort: { 
-                    _id: 1 
+            {
+                $sort: {
+                    _id: 1
                 }
             }
         ]);
+
         if (totalSales.length === 0) {
             return res.status(200).json({
                 success: true,
@@ -280,5 +293,7 @@ exports.getTotalSalesStats = async (req, res) => {
         });
     }
 };
+
+
 
 
