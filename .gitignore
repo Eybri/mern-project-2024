@@ -1,0 +1,49 @@
+# Node.js (backend and frontend)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Logs
+logs
+*.log
+logs/*.log
+
+# Dependency directories
+frontend/node_modules/
+backend/node_modules/
+
+# Build directories
+frontend/build/
+backend/build/
+dist/
+
+# Environment files
+backend/config/.env
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Editor directories and files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Optional: Ignore coverage reports if you're testing
+coverage/
+frontend/coverage/
+backend/coverage/
+
+# Optional: Ignore local development database
+*.sqlite
+*.db
+
+# Optional: Ignore uploads (if you have file uploads)
+uploads/
+backend/uploads/
+frontend/public/uploads/
+
+# Optional: Ignore compiled files (if using TypeScript)
+*.tsbuildinfo
